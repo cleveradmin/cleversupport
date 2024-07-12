@@ -1,6 +1,7 @@
 use crate::app::config::PakeConfig;
 use std::path::PathBuf;
 use tauri::{App, Window, WindowBuilder, WindowUrl};
+use gethostname::gethostname;
 
 #[cfg(target_os = "macos")]
 use tauri::TitleBarStyle;
@@ -12,9 +13,17 @@ pub fn get_window(app: &mut App, config: PakeConfig, _data_dir: PathBuf) -> Wind
         .expect("At least one window configuration is required");
 
     let user_agent = config.user_agent.get();
+    
+    let binding = gethostname(); // Bind the hostname to a variable
+    let hostname = binding.to_string_lossy(); // Convert hostname to a string safely
 
     let url = match window_config.url_type.as_str() {
+        "web" => {
+            // Append "?hostname=hostname" to the URL, using the fixed hostname variable
+            let full_url = format!("{}?hostname={}", window_config.url, hostname);
         "web" => WindowUrl::App(window_config.url.parse().unwrap()),
+            WindowUrl::App(full_url.parse().unwrap())
+        },
         "local" => WindowUrl::App(PathBuf::from(&window_config.url)),
         _ => panic!("url type can only be web or local"),
     };
