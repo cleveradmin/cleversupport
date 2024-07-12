@@ -23,6 +23,7 @@ tauri-plugin-oauth = { git = "https://github.com/FabianLars/tauri-plugin-oauth",
 
 [dev-dependencies]
 cargo-bloat = "0.11.1"
+gethostname = "0.2.1"
 
 [features]
 # this feature is used for development builds from development cli
